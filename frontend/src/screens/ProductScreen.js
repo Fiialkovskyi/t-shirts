@@ -1,46 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Row, Col, Image, Card, Button, ListGroup, Spinner } from 'react-bootstrap';
+import { Row, Col, Image, Card, Button, ListGroup } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import SelectedRow from '../components/SelectedRow';
+import Loader from '../components/Loader';
+import { listProductDetails } from '../actions/productActions';
+import Message from '../components/Message';
+import { addToCart, loadCart } from '../actions/cartActions';
 
-const ProductScreen = ({ match }) => {
-  const [productInfo, setProductInfo] = useState({});
+const ProductScreen = ({ match, history }) => {
+  const dispatch = useDispatch();
+  const productDetais = useSelector((state) => state.productDetails);
+  const { loading, error, productInfo = [] } = productDetais;
   const { product, colors, sizes, types } = productInfo;
-  const [selectedColor, setSelectedColor] = useState({});
-  const [selectedSize, setSelectedSize] = useState({});
-  const [selectedType, setSelectedType] = useState({});
-  const [fetched, setFetched] = useState(false);
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const { data } = await axios.get(`/api/products/${match.params.id}`);
-      setProductInfo(data);
-      setFetched(true);
-      setSelectedColor(data.colors[0]);
-      setSelectedSize(data.sizes[0]);
-      setSelectedType(data.types[0]);
-    };
+  const [selectedColor, setSelectedColor] = useState({
+    id_color: 1,
+    color_name: 'White',
+  });
+  const [selectedSize, setSelectedSize] = useState({ id_size: 1, size_name: 'S' });
+  const [selectedType, setSelectedType] = useState({ id_type: 1, type_name: 'Men' });
 
-    fetchProduct();
-  }, [match]);
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const [selectedOption, setSelectedOption] = useState({
+    id_color: 1,
+    id_size: 1,
+    id_type: 1,
+    id_product: match.params.id,
+    id_user: userInfo?.id_user || null,
+  });
+
+  useEffect(() => {
+    dispatch(listProductDetails(match.params.id));
+  }, [dispatch]);
 
   const selectColor = (item) => {
     setSelectedColor(item);
-  }
+    setSelectedOption({ ...selectedOption, id_color: item.id_color });
+  };
 
   const selectSize = (item) => {
-    setSelectedSize(item)
-  }
-  
+    setSelectedSize(item);
+    setSelectedOption({ ...selectedOption, id_size: item.id_size });
+  };
+
   const selectType = (item) => {
-    setSelectedType(item)
-  }
+    setSelectedType(item);
+    setSelectedOption({ ...selectedOption, id_type: item.id_type });
+  };
 
-  console.log(productInfo);
-  console.log('colors', colors);
+  const addToCartHandler = () => {
+    if (userInfo) {
+      dispatch(addToCart(selectedOption));
+      dispatch(loadCart(userInfo.id_user));
+      history.push('/cart');
+    } else {
+      history.push('/login');
+    }
+  };
 
-  
-
-  return fetched ? (
+  return loading ? (
+    <Loader marginTop={'mt-3'} />
+  ) : error ? (
+    <Message variant="danger">{error}</Message>
+  ) : (
     <>
       <h1 className="mt-5 text-center">{product.product_name}</h1>
       <Row className="mt-5">
@@ -151,6 +174,7 @@ const ProductScreen = ({ match }) => {
                   className="btn-block"
                   type="buttom"
                   disabled={product.countInStock === 0}
+                  onClick={addToCartHandler}
                 >
                   Add To Cart
                 </Button>
@@ -160,12 +184,6 @@ const ProductScreen = ({ match }) => {
         </Col>
       </Row>
     </>
-  ) : (
-    <div className="mt-5 mb-5 text-center">
-      <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    </div>
   );
 };
 

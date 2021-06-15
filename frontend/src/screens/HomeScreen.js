@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, Spinner } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Row, Col } from 'react-bootstrap';
 import Product from '../components/Product';
-import axios from 'axios';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
+import { listProducts } from '../actions/productActions';
 
 const HomeScreen = () => {
-  const [products, setProducts] = useState([]);
-  const [fetched, setFetched] = useState(false);
+  const dispatch = useDispatch();
+  const productList = useSelector((state) => state.productList);
+  const { loading, error, products } = productList;
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await axios.get('/api/products');
-      setProducts(data);
-      setFetched(true);
-    };
+    dispatch(listProducts());
+  }, [dispatch]);
 
-    fetchProducts();
-  }, []);
-
-  console.log(products);
-  return (
-    fetched ? 
+  return loading ? (
+    <Loader />
+  ) : error ? (
+    <Message variant="danger">{error}</Message>
+  ) : (
     <>
       <h1 className="mt-4">Latest Products</h1>
       <Row>
@@ -30,12 +30,6 @@ const HomeScreen = () => {
         ))}
       </Row>
     </>
-      :
-    <div className="mt-5 mb-5 text-center">
-      <Spinner animation="border" role="status">
-        <span className="sr-only">Loading...</span>
-      </Spinner>
-    </div>
   );
 };
 

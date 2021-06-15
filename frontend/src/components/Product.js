@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
+
 const Product = ({ product }) => {
   return (
     <Card className=" p-3 rounded h-100 border-4">
