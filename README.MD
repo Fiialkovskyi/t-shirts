@@ -6,4 +6,4 @@ DB_PASS = root .
 #
 Для запуска в production mode необходимо запустить сервер и клиент командой npm start из корня проекта. Проект запустится по адрессу http://localhost:4000/
 #
-Для запуска в режиме разработки необходимо в вайле .env заменить NODE_ENV = production на NODE_ENV = development.
+Для запуска в режиме разработки необходимо в вайле .env заменить NODE_ENV = production на NODE_ENV = development. Запуск производится с помощю команды npm run dev
