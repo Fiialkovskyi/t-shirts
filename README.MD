@@ -1,9 +1,9 @@
-Перед запуском проекта необходимо залить дамп базы данных на Ваш сервер. Файл базы данных t-shirts находится в папке database в корне проекта.
+Before starting the project, you need to upload the database dump to your server. The t-shirts database file is located in the database folder at the root of the project.
 #
-Для удобства проверки проекта файл .env был добавлен на гитаб. В нем необходимо только добавить 
-Ваши данные для подключения к базе данных. По дефолту указаны DB_USER = root
-DB_PASS = root .
+
+Please add your database login and password in .env (DB_PASS and DB_PASS).
 #
-Для запуска в production mode необходимо запустить сервер и клиент командой npm start из корня проекта. Проект запустится по адрессу http://localhost:4000/
+
+To start in production mode, you need to start the server and client with the npm start command from the root of the project. The project will be launched at the address http: // localhost: 4000 /
 #
-Для запуска в режиме разработки необходимо в вайле .env заменить NODE_ENV = production на NODE_ENV = development. Запуск производится с помощю команды npm run dev
+To run in development mode, replace NODE_ENV = production with NODE_ENV = development in the .env file. The launch is performed using the npm run dev command
